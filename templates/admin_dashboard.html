@@ -1,241 +1,206 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Admin Dashboard</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f4f6f9;
-    }
+{% extends "base.html" %}
 
-    /* ===== Navbar ===== */
-    .navbar {
-        background: linear-gradient(135deg, #4e73df, #224abe);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
-
-    .navbar-brand {
-        font-weight: 600;
-        font-size: 1.4rem;
-        letter-spacing: 0.5px;
-    }
-
-    /* ===== Stats Cards ===== */
-    .card-stats {
-        border-radius: 15px;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .card-stats:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-    }
-
-    .card-stats h5 {
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
-
-    .card-stats .icon {
-        font-size: 2.2rem;
-        margin-bottom: 10px;
-    }
-
-    .badge-custom {
-        font-size: 1.2rem;
-        padding: 0.5em 1.2em;
-        border-radius: 14px;
-    }
-
-    /* ===== Tables ===== */
-    table {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-
-    thead.table-dark th {
-        background: #2c3e50;
-        border: none;
-        letter-spacing: 0.4px;
-    }
-
-    tbody tr {
-        transition: all 0.2s ease-in-out;
-    }
-
-    tbody tr:hover {
-        background-color: #f1f3f5;
-    }
-
-    /* ===== Buttons ===== */
-    .btn-primary {
-        background: #4e73df;
-        border: none;
-    }
-
-    .btn-primary:hover {
-        background: #3758d0;
-    }
-
-    .btn-warning {
-        background: #f6c23e;
-        border: none;
-        color: #000;
-    }
-
-    .btn-warning:hover {
-        background: #dda20a;
-        color: #000;
-    }
-
-    .btn-danger {
-        border-radius: 6px;
-    }
-
-    /* ===== Prediction Labels ===== */
-    .text-healthy {
-        color: #1cc88a;
-        font-weight: 600;
-    }
-
-    .text-disease {
-        color: #e74a3b;
-        font-weight: 600;
-    }
-
-    /* ===== Responsive ===== */
-    @media (max-width: 768px) {
-        .card-stats h5 {
-            font-size: 1rem;
-        }
-        .badge-custom {
-            font-size: 1rem;
-            padding: 0.4em 0.8em;
-        }
-        table {
-            font-size: 0.9rem;
-        }
-    }
-</style>
-</head>
-<body>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#"><i class="bi bi-speedometer2 me-2"></i>Admin Dashboard</a>
-        <div class="d-flex ms-auto">
-            <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-light">Logout</a>
+{% block content %}
+<div class="container-fluid px-4 px-lg-5 animate-fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Admin Dashboard</h2>
+            <p class="text-muted small">System Overview & Management</p>
+        </div>
+        <div>
+            <a href="{{ url_for('add_doctor') }}" class="btn btn-theme">
+                <i class="fa-solid fa-plus me-2"></i>Add New Doctor
+            </a>
         </div>
     </div>
-</nav>
 
-<div class="container mt-4">
-
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-6 mb-3">
-            <div class="card card-stats p-4 text-center bg-success text-white">
-                <i class="bi bi-people-fill icon"></i>
-                <h5>Total Patients</h5>
-                <span class="badge badge-custom bg-white text-success">{{ total_patients }}</span>
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-6">
+            <div class="glass-card p-4 d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold small mb-2">Total Patients</h6>
+                    <h2 class="fw-bold mb-0 text-primary">{{ total_patients }}</h2>
+                </div>
+                <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                    <i class="fa-solid fa-users fa-2x"></i>
+                </div>
             </div>
         </div>
-        <div class="col-md-6 mb-3">
-            <div class="card card-stats p-4 text-center bg-info text-white">
-                <i class="bi bi-person-badge-fill icon"></i>
-                <h5>Total Doctors</h5>
-                <span class="badge badge-custom bg-white text-info">{{ total_doctors }}</span>
+        <div class="col-md-6 col-lg-6">
+            <div class="glass-card p-4 d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold small mb-2">Total Doctors</h6>
+                    <h2 class="fw-bold mb-0 text-secondary">{{ total_doctors }}</h2>
+                </div>
+                <div class="bg-secondary bg-opacity-10 p-3 rounded-circle text-secondary">
+                    <i class="fa-solid fa-user-doctor fa-2x"></i>
+                </div>
             </div>
         </div>
     </div>
 
-    <a href="{{ url_for('add_doctor') }}" class="btn btn-warning mb-3"><i class="bi bi-plus-circle me-1"></i> Add Doctor</a>
-
-    <!-- Doctors Table -->
-    <h5 class="mt-3 mb-2">Doctors List</h5>
-    <div class="table-responsive mb-4">
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Doctor ID</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for doc_id, doc in doctors.items() %}
-                    <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ doc_id }}</td>
-                        <td>{{ doc.name }}</td>
-                        <td>{{ doc.phone }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <hr>
-
-    <!-- Patients Table -->
-    {% for date in sorted_dates %}
-        <h5 class="mt-4 mb-2"><i class="bi bi-calendar-event me-1"></i> {{ date }}</h5>
-        <div class="table-responsive mb-4">
-            <table class="table table-striped table-bordered align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Age</th>
-                        <th>Total Bilirubin</th>
-                        <th>Direct Bilirubin</th>
-                        <th>Alkaline Phosphotase</th>
-                        <th>ALT</th>
-                        <th>AST</th>
-                        <th>Total Proteins</th>
-                        <th>Albumin</th>
-                        <th>Albumin/Globulin Ratio</th>
-                        <th>Prediction</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for patient in patients_by_date[date] %}
-                        <tr>
-                            <td>{{ loop.index }}</td>
-                            <td>{{ patient.name }}</td>
-                            <td>{{ patient.phone }}</td>
-                            {% for f in patient.features %}
-                                <td>{{ f }}</td>
-                            {% endfor %}
-                            <td>
-                                {% if patient.prediction == 1 %}
-                                    <span class="text-disease">Liver Disease</span>
+    <div class="row g-4">
+        <!-- Doctors List -->
+        <div class="col-lg-4">
+            <div class="glass-card h-100">
+                <div class="p-4 border-bottom header-bg">
+                    <h5 class="fw-bold mb-0">Doctors Directory</h5>
+                </div>
+                <div class="p-0">
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="bg-light sticky-top">
+                                <tr>
+                                    <th class="ps-4">ID</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc_id, doc in doctors.items() %}
+                                <tr>
+                                    <td class="ps-4 fw-medium text-muted">{{ doc_id }}</td>
+                                    <td class="fw-bold text-dark">{{ doc.name }}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="small">{{ doc.phone }}</span>
+                                            <div class="delete-actions" id="del-doc-{{ doc_id }}">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-light text-danger rounded-circle show-confirm"
+                                                    onclick="toggleDelete('doc-{{ doc_id }}')" title="Delete Doctor">
+                                                    <i class="fa-regular fa-trash-can"></i>
+                                                </button>
+                                                <div class="confirm-group d-none">
+                                                    <form method="POST"
+                                                        action="{{ url_for('delete_doctor', doctor_id=doc_id) }}"
+                                                        class="d-inline">
+                                                        <button type="submit"
+                                                            class="btn btn-xs btn-danger rounded-pill px-2"
+                                                            style="font-size: 0.7rem;">Delete</button>
+                                                    </form>
+                                                    <button type="button" class="btn btn-xs btn-light rounded-pill px-2"
+                                                        style="font-size: 0.7rem;"
+                                                        onclick="toggleDelete('doc-{{ doc_id }}')">X</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                                 {% else %}
-                                    <span class="text-healthy">Healthy</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <form action="{{ url_for('delete_patient', phone=patient.phone) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this patient?');">
-                                    <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-trash me-1"></i> Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">No doctors found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-    {% endfor %}
+
+        <!-- Patients List -->
+        <div class="col-lg-8">
+            <div class="glass-card h-100">
+                <div class="p-4 border-bottom header-bg">
+                    <h5 class="fw-bold mb-0">Patient Health Records</h5>
+                </div>
+                <div class="">
+                    {% for date in sorted_dates %}
+                    <div class="bg-light px-4 py-2 border-bottom border-top">
+                        <small class="fw-bold text-uppercase text-muted"><i class="fa-regular fa-calendar me-2"></i>{{
+                            date }}</small>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Patient</th>
+                                    <th>Metrics</th>
+                                    <th>Prediction</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for patient in patients_by_date[date] %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark">{{ patient.name }}</div>
+                                        <div class="small text-muted">{{ patient.phone }}</div>
+                                    </td>
+                                    <td>
+                                        <small class="d-block text-muted">Age: {{ patient.features[0] }} | Gender: {{
+                                            'Male' if patient.features[1] == 1 else 'Female' }}</small>
+                                        <small class="text-muted">Bilirubin: {{ patient.features[2] }}</small>
+                                    </td>
+                                    <td>
+                                        {% if patient.prediction == 1 %}
+                                        <span class="badge badge-soft-danger"><i
+                                                class="fa-solid fa-circle-exclamation me-1"></i>Disease</span>
+                                        {% else %}
+                                        <span class="badge badge-soft-success"><i
+                                                class="fa-solid fa-check me-1"></i>Healthy</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="delete-actions justify-content-end" id="del-pat-{{ patient.id }}">
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-danger border-0 show-confirm"
+                                                onclick="toggleDelete('pat-{{ patient.id }}')" title="Delete Record">
+                                                <i class="fa-regular fa-trash-can"></i>
+                                            </button>
+                                            <div class="confirm-group d-none">
+                                                <small class="text-danger me-2">Confirm?</small>
+                                                <form method="POST"
+                                                    action="{{ url_for('delete_patient', phone=patient.phone) }}"
+                                                    class="d-inline">
+                                                    <button type="submit"
+                                                        class="btn btn-sm btn-danger rounded-pill px-2"
+                                                        style="font-size: 0.7rem;">Yes</button>
+                                                </form>
+                                                <button type="button" class="btn btn-sm btn-light rounded-pill px-2"
+                                                    style="font-size: 0.7rem;"
+                                                    onclick="toggleDelete('pat-{{ patient.id }}')">No</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5 text-muted">
+                        <i class="fa-regular fa-folder-open display-4 mb-3 d-block opacity-25"></i>
+                        No patient records available.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleDelete(id) {
+        const container = document.getElementById('del-' + id);
+        const showBtn = container.querySelector('.show-confirm');
+        const confirmGrp = container.querySelector('.confirm-group');
+
+        if (confirmGrp.classList.contains('d-none')) {
+            showBtn.classList.add('d-none');
+            confirmGrp.classList.remove('d-none');
+            confirmGrp.classList.add('d-flex', 'align-items-center', 'gap-1');
+        } else {
+            showBtn.classList.remove('d-none');
+            confirmGrp.classList.add('d-none');
+            confirmGrp.classList.remove('d-flex', 'align-items-center', 'gap-1');
+        }
+    }
+</script>
+{% endblock %}

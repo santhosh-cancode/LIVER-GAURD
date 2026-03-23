@@ -1,91 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Prediction Result</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+{% extends "base.html" %}
 
-    .result-container {
-      background: #fff;
-      padding: 40px 30px;
-      border-radius: 20px;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 380px;
-    }
+{% block content %}
+<div class="container animate-fade-in">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="glass-card text-center p-5">
+        <div class="mb-4">
+          {% if is_disease %}
+          <div class="display-1 text-danger mb-3">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <h2 class="fw-bold text-danger mb-3">Attention Required</h2>
+          <div class="alert alert-danger border-0 bg-danger bg-opacity-10 text-danger p-4 rounded-3 mb-4">
+            <h4 class="fw-bold mb-0">{{ prediction }}</h4>
+          </div>
+          <p class="text-muted">Our analysis suggests potential signs of liver disease. Please consult with a
+            specialist for further diagnosis.</p>
+          {% else %}
+          <div class="display-1 text-success mb-3">
+            <i class="fa-solid fa-shield-heart"></i>
+          </div>
+          <h2 class="fw-bold text-success mb-3">No Issues Detected</h2>
+          <div class="alert alert-success border-0 bg-success bg-opacity-10 text-success p-4 rounded-3 mb-4">
+            <h4 class="fw-bold mb-0">{{ prediction }}</h4>
+          </div>
+          <p class="text-muted">Great news! The analysis shows no signs of liver disease based on the provided data.
+            Keep maintaining a healthy lifestyle.</p>
+          {% endif %}
+        </div>
 
-    .result-container h2 {
-      font-size: 26px;
-      font-weight: 700;
-      color: #333;
-      margin-bottom: 25px;
-    }
+        {% if features %}
+        <div class="text-start mt-5">
+          <h5 class="fw-bold border-bottom pb-2 mb-3">Your Clinical Input</h5>
+          <div class="row g-3">
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Age</small>
+                <span class="fw-bold">{{ features[0] }} Years</span>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Gender</small>
+                <span class="fw-bold">{{ 'Male' if features[1] == 1 else 'Female' }}</span>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Total Bilirubin</small>
+                <span class="fw-bold">{{ features[2] }} mg/dL</span>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Alkaline Phosphotase</small>
+                <span class="fw-bold">{{ features[3] }} IU/L</span>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Alamine Aminotransferase</small>
+                <span class="fw-bold">{{ features[4] }} IU/L</span>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Aspartate Aminotransferase</small>
+                <span class="fw-bold">{{ features[5] }} IU/L</span>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Total Proteins</small>
+                <span class="fw-bold">{{ features[6] }} g/dL</span>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">Albumin</small>
+                <span class="fw-bold">{{ features[7] }} g/dL</span>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 bg-light rounded-3">
+                <small class="text-muted d-block">A/G Ratio</small>
+                <span class="fw-bold">{{ features[8] }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
 
-    .result-text {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 30px;
-    }
+        <div class="d-flex gap-3 justify-content-center mt-5">
+          <a href="{{ url_for('form') }}" class="btn btn-theme">New Prediction</a>
+          <a href="{{ url_for('home') }}" class="btn btn-outline-theme">Back to Home</a>
+        </div>
 
-    .positive {
-      color: #dc3545; /* red for disease */
-    }
-
-    .negative {
-      color: #28a745; /* green for no disease */
-    }
-
-    .btn {
-      display: inline-block;
-      margin: 8px;
-      padding: 12px 20px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-      background: #2196F3;
-      transition: all 0.3s ease;
-    }
-
-    .btn:hover {
-      background: #1976D2;
-    }
-
-    .btn-logout {
-      background: #dc3545;
-    }
-
-    .btn-logout:hover {
-      background: #a71d2a;
-    }
-
-    @media (max-width: 400px) {
-      .result-container { padding: 35px 25px; width: 90%; }
-      .result-container h2 { font-size: 22px; }
-      .result-text { font-size: 18px; }
-      .btn { font-size: 15px; padding: 10px 16px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="result-container">
-    <h2>Prediction Result</h2>
-    <div class="result-text {% if 'Detected' in prediction %}positive{% else %}negative{% endif %}">
-      {{ prediction }}
+        <div class="mt-4 pt-4 border-top">
+          <p class="text-muted small mb-0">Disclaimer: This is a computer-assisted prediction tool and does not replace
+            professional medical advice.</p>
+        </div>
+      </div>
     </div>
-    <a href="{{ url_for('form') }}" class="btn">🔄 Go Back</a>
-    <a href="{{ url_for('logout') }}" class="btn btn-logout">🚪 Logout</a>
   </div>
-</body>
-</html>
+</div>
+{% endblock %}

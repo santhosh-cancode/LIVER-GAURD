@@ -1,130 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Doctor Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            background: #f5f5f5;
-            min-height: 100vh;
-        }
+{% extends "base.html" %}
 
-        .dashboard-container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 30px;
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .dashboard-header h3 {
-            font-weight: 700;
-            color: #333;
-        }
-
-        .btn-logout {
-            background: #dc3545;
-            color: #fff;
-            font-weight: 600;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-logout:hover {
-            background: #a71d2a;
-        }
-
-        h5 {
-            margin-bottom: 20px;
-            color: #555;
-        }
-
-        table {
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        thead {
-            background: #2196F3;
-            color: #fff;
-        }
-
-        tbody tr:nth-child(even) {
-            background: #f9f9f9;
-        }
-
-        tbody tr:hover {
-            background: #e0f0ff;
-        }
-
-        td, th {
-            vertical-align: middle !important;
-            text-align: center;
-        }
-
-        .text-danger {
-            font-weight: 600;
-        }
-
-        .text-success {
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-container { padding: 20px; margin: 20px; }
-            table { font-size: 14px; }
-        }
-    </style>
-</head>
-<body>
-    <div class="dashboard-container">
-        <div class="dashboard-header">
-            <h3>Welcome Dr. {{ doctor_name }}</h3>
-            <a href="{{ url_for('doctor_logout') }}" class="btn btn-logout">Logout</a>
+{% block content %}
+<div class="container-fluid px-4 px-lg-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 animate-fade-in">
+        <div>
+            <h2 class="fw-bold mb-0">Doctor Dashboard</h2>
+            <p class="text-muted small">Welcome, Dr. {{ doctor_name }}</p>
         </div>
-
-        <h5>Total Patients: {{ patients|length }}</h5>
-
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Date</th>
-                    <th>Prediction</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in patients %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ p.name }}</td>
-                    <td>{{ p.phone }}</td>
-                    <td>{{ p.date }}</td>
-                    <td>
-                        {% if p.prediction == 1 %}
-                            <span class="text-danger">Liver Disease</span>
-                        {% else %}
-                            <span class="text-success">Healthy</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="bg-white px-4 py-2 rounded-pill shadow-sm border">
+            <span class="fw-bold text-primary">{{ patients|length }}</span> <span class="text-muted">Total
+                Patients</span>
+        </div>
     </div>
-</body>
-</html>
+
+    <div class="glass-card animate-fade-in">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-secondary text-uppercase small fw-bold border-bottom-0">#</th>
+                        <th class="py-3 text-secondary text-uppercase small fw-bold border-bottom-0">Patient Name</th>
+                        <th class="py-3 text-secondary text-uppercase small fw-bold border-bottom-0">Status</th>
+                        <th class="py-3 text-secondary text-uppercase small fw-bold border-bottom-0">Result</th>
+                        <th class="py-3 text-secondary text-uppercase small fw-bold border-bottom-0">Date</th>
+                        <th class="py-3 text-center text-secondary text-uppercase small fw-bold border-bottom-0">Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    {% for p in patients %}
+                    <tr>
+                        <td class="ps-4 fw-medium text-muted">{{ loop.index }}</td>
+                        <td>
+                            <div>
+                                <div class="fw-bold text-dark">{{ p.name }}</div>
+                                <div class="small text-muted">{{ p.phone }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            {% set status_class = 'badge-soft-success' if p.status == 'Completed' else
+                            'badge-soft-warning' %}
+                            <span class="badge {{ status_class }}" id="badge-{{ p.id }}">{{ p.status }}</span>
+                        </td>
+                        <td>
+                            {% if p.prediction == 1 %}
+                            <span class="badge badge-soft-danger"><i
+                                    class="fa-solid fa-circle-exclamation me-1"></i>Liver Disease</span>
+                            {% else %}
+                            <span class="badge badge-soft-success"><i class="fa-solid fa-check me-1"></i>Healthy</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">{{ p.date }}</td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center align-items-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                                    data-bs-toggle="collapse" data-bs-target="#details-{{ p.id }}"
+                                    title="View Clinical Data">
+                                    <i class="fa-solid fa-eye me-1"></i> Details
+                                </button>
+                                <div class="form-check form-switch d-inline-block m-0" title="Mark as Visited">
+                                    <input class="form-check-input" type="checkbox" role="switch"
+                                        onchange="toggleStatus({{ p.id }}, this)" {% if p.status=='Completed'
+                                        %}checked{% endif %}>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Expandable Details Row -->
+                    <tr class="collapse" id="details-{{ p.id }}">
+                        <td colspan="6" class="bg-light border-0 px-4 py-4">
+                            <div class="row g-3">
+                                {% set labels = ["Age", "Gender", "Total Bilirubin", "Alkaline Phosphotase", "ALT",
+                                "AST", "Total Proteins", "Albumin", "A/G Ratio"] %}
+                                {% set units = ["Years", "", "mg/dL", "IU/L", "IU/L", "IU/L", "g/dL", "g/dL", ""] %}
+                                {% for val in p.features %}
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="p-3 bg-white rounded-3 border-0 shadow-sm">
+                                        <small class="text-muted d-block text-uppercase mb-1"
+                                            style="font-size: 0.7rem; letter-spacing: 0.5px;">{{ labels[loop.index0]
+                                            }}</small>
+                                        <span class="fw-bold text-dark">
+                                            {% if loop.index0 == 1 %}
+                                            {{ 'Male' if val == 1 else 'Female' }}
+                                            {% else %}
+                                            {{ val }}
+                                            {% endif %}
+                                        </span>
+                                        <small class="text-muted ms-1">{{ units[loop.index0] }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    {% if patients|length == 0 %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fa-regular fa-folder-open display-4 mb-3 d-block opacity-25"></i>
+                            No patient records found.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+
+    function toggleStatus(patientId, checkbox) {
+        const isChecked = checkbox.checked;
+        const status = isChecked ? 'Completed' : 'Pending';
+        const badge = document.getElementById(`badge-${patientId}`);
+
+        // Optimistic UI Update
+        if (badge) {
+            badge.textContent = status;
+            badge.className = isChecked ? 'badge badge-soft-success' : 'badge badge-soft-warning';
+        }
+
+        fetch(`/update_status/${patientId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: status })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Status updated successfully');
+                } else {
+                    // Revert on failure
+                    checkbox.checked = !isChecked;
+                    if (badge) {
+                        badge.textContent = !isChecked ? 'Completed' : 'Pending';
+                        badge.className = !isChecked ? 'badge badge-soft-success' : 'badge badge-soft-warning';
+                    }
+                    console.error('Failed to update status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Revert on error
+                checkbox.checked = !isChecked;
+                if (badge) {
+                    badge.textContent = !isChecked ? 'Completed' : 'Pending';
+                    badge.className = !isChecked ? 'badge badge-soft-success' : 'badge badge-soft-warning';
+                }
+                console.error('Network error occurred');
+            });
+    }
+</script>
+{% endblock %}
